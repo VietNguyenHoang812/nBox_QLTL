@@ -1,0 +1,7 @@
+# Tệp .env mẫu chứa các biến môi trường
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=file_storage
+UPLOAD_DIR=./uploads
