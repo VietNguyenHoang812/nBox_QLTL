@@ -1,8 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query
-from sqlalchemy.orm import Session
 from typing import List, Optional
 
-from app.database.base import get_db
 from app.repositories.file_repository import FileRepository
 from app.services.file_service import FileService
 from app.models.file_model import FileResponse, FileUpdate, FileSearchParams
@@ -11,10 +9,13 @@ router = APIRouter()
 
 
 # Dependency for FileService
-def get_file_service(db: Session = Depends(get_db)):
-    repository = FileRepository(db)
-    return FileService(repository)
+# def get_file_service(db: Session = Depends(get_db)):
+#     repository = FileRepository(db)
+#     return FileService(repository)
 
+def get_file_service():
+    repository = FileRepository()
+    return FileService(repository)
 
 @router.post("/files/", response_model=FileResponse)
 async def upload_file(
@@ -39,7 +40,7 @@ def get_files(
     return file_service.get_all_files(skip, limit)
 
 
-@router.get("/files/{file_id}", response_model=FileResponse)
+@router.get("/files/{file_id}")
 def get_file(
     file_id: int,
     file_service: FileService = Depends(get_file_service)
@@ -48,6 +49,7 @@ def get_file(
     file = file_service.get_file(file_id)
     if file is None:
         raise HTTPException(status_code=404, detail="File not found")
+
     return file
 
 

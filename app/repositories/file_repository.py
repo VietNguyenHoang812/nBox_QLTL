@@ -1,60 +1,78 @@
-from sqlalchemy.orm import Session
+import pandas as pd
+
 from typing import List, Optional
-from app.database.models import File
-from app.models.file_model import FileCreate, FileUpdate, FileSearchParams
+from app.database.base import get_db_connection
+from app.models.file_model import FileUpdate, FileSearchParams
 
 
 class FileRepository:
-    def __init__(self, db: Session):
-        self.db = db
-    
-    def create(self, file_data: dict) -> File:
-        db_file = File(**file_data)
-        self.db.add(db_file)
-        self.db.commit()
-        self.db.refresh(db_file)
-        return db_file
-    
-    def get_by_id(self, file_id: int) -> Optional[File]:
-        return self.db.query(File).filter(File.id == file_id).first()
-    
-    def get_all(self, skip: int = 0, limit: int = 100) -> List[File]:
-        return self.db.query(File).offset(skip).limit(limit).all()
-    
-    def update(self, file_id: int, update_data: FileUpdate) -> Optional[File]:
-        db_file = self.get_by_id(file_id)
-        if db_file:
-            update_dict = update_data.dict(exclude_unset=True)
-            for key, value in update_dict.items():
-                setattr(db_file, key, value)
-            self.db.commit()
-            self.db.refresh(db_file)
-        return db_file
-    
+    def get_by_id(self, file_id: int):
+        with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT * FROM fake_db WHERE id = 1"
+                )
+                rows = cur.fetchone()
+                print(rows)
+                colnames = [desc[0] for desc in cur.description]
+                data = dict(zip(colnames, rows))
+        print(data)
+        return data
+
+    def get_all(self, skip: int = 0, limit: int = 10):
+        with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT * FROM fake_db LIMIT %s OFFSET %s",
+                    (limit, skip)
+                )
+                colnames = [desc[0] for desc in cur.description]
+                rows = cur.fetchall()
+                df = pd.DataFrame(rows, columns=colnames)
+                print(df.to_dict(orient="records"))
+            #     cur.close()
+            # conn.close()
+        
+        return df.to_dict(orient="records")
+
+
+    def update(self, file_id: int, update_data: FileUpdate) -> Optional[dict]:
+        with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                update_dict = update_data.model_dump(exclude_unset=True)
+                set_clause = ", ".join(f"{key} = %s" for key in update_dict.keys())
+                values = list(update_dict.values()) + [file_id]
+                cur.execute(
+                    f"UPDATE files SET {set_clause} WHERE id = %s RETURNING *",
+                    values
+                )
+                conn.commit()
+                return cur.fetchone()
+
     def delete(self, file_id: int) -> bool:
-        db_file = self.get_by_id(file_id)
-        if db_file:
-            self.db.delete(db_file)
-            self.db.commit()
-            return True
-        return False
-    
-    def search(self, params: FileSearchParams, skip: int = 0, limit: int = 100) -> List[File]:
-        query = self.db.query(File)
-        
-        if params.filename:
-            query = query.filter(File.filename.ilike(f"%{params.filename}%"))
-        
-        if params.content_type:
-            query = query.filter(File.content_type == params.content_type)
-        
-        if params.min_size is not None:
-            query = query.filter(File.file_size >= params.min_size)
-        
-        if params.max_size is not None:
-            query = query.filter(File.file_size <= params.max_size)
-        
-        if params.description:
-            query = query.filter(File.description.ilike(f"%{params.description}%"))
-        
-        return query.offset(skip).limit(limit).all()
+        with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "DELETE FROM files WHERE id = %s",
+                    (file_id,)
+                )
+                conn.commit()
+                return cur.rowcount > 0
+
+    def search(self, params: FileSearchParams, skip: int = 0, limit: int = 100):
+        with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                query = """
+                    SELECT * FROM files 
+                    WHERE (%(filename)s IS NULL OR filename ILIKE %(filename_pattern)s)
+                    AND (%(content_type)s IS NULL OR content_type = %(content_type)s)
+                    LIMIT %(limit)s OFFSET %(skip)s
+                """
+                cur.execute(query, {
+                    "filename": params.filename,
+                    "filename_pattern": f"%{params.filename}%" if params.filename else None,
+                    "content_type": params.content_type,
+                    "limit": limit,
+                    "skip": skip
+                })
+                return cur.fetchall()

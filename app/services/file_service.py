@@ -37,22 +37,23 @@ class FileService:
         
         # Save to database
         db_file = self.file_repository.create(file_data)
-        return FileInDB.from_orm(db_file)
+        return FileInDB.model_validate(db_file)
     
     def get_file(self, file_id: int) -> Optional[FileInDB]:
         db_file = self.file_repository.get_by_id(file_id)
         if db_file:
-            return FileInDB.from_orm(db_file)
+            return db_file
         return None
     
     def get_all_files(self, skip: int = 0, limit: int = 100) -> List[FileInDB]:
         db_files = self.file_repository.get_all(skip, limit)
-        return [FileInDB.from_orm(file) for file in db_files]
+        return db_files
+        # return [FileInDB.model_validate(file) for file in db_files]
     
     def update_file(self, file_id: int, file_update: FileUpdate) -> Optional[FileInDB]:
         db_file = self.file_repository.update(file_id, file_update)
         if db_file:
-            return FileInDB.from_orm(db_file)
+            return FileInDB.model_validate(db_file)
         return None
     
     def delete_file(self, file_id: int) -> bool:
@@ -67,4 +68,4 @@ class FileService:
     
     def search_files(self, params: FileSearchParams, skip: int = 0, limit: int = 100) -> List[FileInDB]:
         db_files = self.file_repository.search(params, skip, limit)
-        return [FileInDB.from_orm(file) for file in db_files]
+        return [FileInDB.model_validate(file) for file in db_files]

@@ -16,16 +16,23 @@ class FileUpdate(FileBase):
 
 
 class FileInDB(FileBase):
-    id: int
-    filename: str
-    file_path: str
-    content_type: str
-    file_size: int
-    created_at: datetime
-    updated_at: Optional[datetime] = None
-
-    class Config:
-        orm_mode = True
+    id: str
+    option_id: int
+    doc_name: str
+    doc_code: str
+    date_publish: str
+    date_expire: str
+    version: str
+    author: str
+    approver: str
+    year_publish: str
+    field: str
+    doc_type: str
+    validity: str
+    status: str
+    updated_by: str
+    leader_approver: str
+    updated_time: Optional[datetime] = None
 
 
 class FileResponse(FileInDB):

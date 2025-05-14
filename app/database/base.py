@@ -22,3 +22,16 @@ def get_db():
         yield db
     finally:
         db.close()
+
+import psycopg2
+from psycopg2.extras import RealDictCursor
+from app.config import settings
+
+def get_db_connection():
+    return psycopg2.connect(
+        host=settings.POSTGRES_HOST,
+        database=settings.POSTGRES_DB,
+        port=settings.POSTGRES_PORT,
+        user=settings.POSTGRES_USER,
+        password=settings.POSTGRES_PASSWORD,
+    )
