@@ -1,2 +1,4 @@
 artifact/*
 **/__pycache__/**
+test/*
+upload/*

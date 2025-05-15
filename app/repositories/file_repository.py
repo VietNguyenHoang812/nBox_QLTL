@@ -1,41 +1,15 @@
+import logging
 import pandas as pd
 
-from typing import List, Optional
+from typing import Union, List, Dict, Optional
 from app.database.base import get_db_connection
-from app.models.file_model import FileUpdate, FileSearchParams
+from app.models.file_model import FileUpdate
+from app.models.request_model import DocumentSearchRequest
 
+
+logger = logging.getLogger(__name__)
 
 class FileRepository:
-    def get_by_id(self, file_id: int):
-        with get_db_connection() as conn:
-            with conn.cursor() as cur:
-                cur.execute(
-                    "SELECT * FROM fake_db WHERE id = 1"
-                )
-                rows = cur.fetchone()
-                print(rows)
-                colnames = [desc[0] for desc in cur.description]
-                data = dict(zip(colnames, rows))
-        print(data)
-        return data
-
-    def get_all(self, skip: int = 0, limit: int = 10):
-        with get_db_connection() as conn:
-            with conn.cursor() as cur:
-                cur.execute(
-                    "SELECT * FROM fake_db LIMIT %s OFFSET %s",
-                    (limit, skip)
-                )
-                colnames = [desc[0] for desc in cur.description]
-                rows = cur.fetchall()
-                df = pd.DataFrame(rows, columns=colnames)
-                print(df.to_dict(orient="records"))
-            #     cur.close()
-            # conn.close()
-        
-        return df.to_dict(orient="records")
-
-
     def update(self, file_id: int, update_data: FileUpdate) -> Optional[dict]:
         with get_db_connection() as conn:
             with conn.cursor() as cur:
@@ -59,20 +33,46 @@ class FileRepository:
                 conn.commit()
                 return cur.rowcount > 0
 
-    def search(self, params: FileSearchParams, skip: int = 0, limit: int = 100):
-        with get_db_connection() as conn:
-            with conn.cursor() as cur:
-                query = """
-                    SELECT * FROM files 
-                    WHERE (%(filename)s IS NULL OR filename ILIKE %(filename_pattern)s)
-                    AND (%(content_type)s IS NULL OR content_type = %(content_type)s)
-                    LIMIT %(limit)s OFFSET %(skip)s
-                """
-                cur.execute(query, {
-                    "filename": params.filename,
-                    "filename_pattern": f"%{params.filename}%" if params.filename else None,
-                    "content_type": params.content_type,
-                    "limit": limit,
-                    "skip": skip
-                })
-                return cur.fetchall()
+    def search(self, search_request: DocumentSearchRequest) -> Union[List[Dict], Dict[str, str]]:
+        """
+        Hàm thực hiện tìm kiếm tài liệu với các bộ lọc được cung cấp
+        """
+        try:
+            with get_db_connection() as conn:
+                with conn.cursor() as cur:
+                    # Xây dựng câu query SQL động dựa trên các tham số được cung cấp
+                    query = "SELECT * FROM fake_db WHERE 1=1"
+                    doc_name = search_request.doc_name
+                    option_doc = search_request.option_doc
+                    field = search_request.field
+                    doc_type = search_request.doc_type
+                    params = []
+                    
+                    if doc_name:
+                        query += " AND doc_name ILIKE %s"
+                        params.append(f"%{doc_name}%")
+                    
+                    if option_doc:
+                        query += " AND option_doc = %s"
+                        params.append(option_doc)
+                    
+                    if field:
+                        query += " AND field = %s"
+                        params.append(field)
+                        
+                    if doc_type:
+                        query += " AND doc_type = %s"
+                        params.append(doc_type)
+        
+                    cur.execute(query, params)
+                    columns = [desc[0] for desc in cur.description]
+                    rows = cur.fetchall()
+                    return [dict(zip(columns, row)) for row in rows]
+        
+        except Exception as e:
+            logger.error(f"Database error in search: {str(e)}")
+            return {
+                "status": "error",
+                "message": "Database operation failed",
+                "details": str(e)
+            }

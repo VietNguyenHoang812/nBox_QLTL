@@ -34,4 +34,5 @@ def get_db_connection():
         port=settings.POSTGRES_PORT,
         user=settings.POSTGRES_USER,
         password=settings.POSTGRES_PASSWORD,
+        # cursor_factory=RealDictCursor
     )

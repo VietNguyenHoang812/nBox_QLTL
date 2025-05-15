@@ -1,11 +1,12 @@
 import os
 import shutil
 from typing import List, Optional
-from fastapi import UploadFile
+from fastapi import UploadFile, HTTPException
 from sqlalchemy.orm import Session
 
 from app.repositories.file_repository import FileRepository
-from app.models.file_model import FileCreate, FileUpdate, FileSearchParams, FileInDB
+from app.models.file_model import FileCreate, FileUpdate, FileSearchParams, FileInDB, DocumentSearchRequest
+from app.models.request_model import UploadRequest
 from app.config import settings
 
 
@@ -15,6 +16,15 @@ class FileService:
         # Ensure upload directory exists
         os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
     
+    async def upload_files(self, requests: List[UploadRequest], files: List[UploadFile]):
+        """
+        Upload multiple files with their corresponding request metadata
+        """
+        for request in requests:
+            
+        
+        pass
+
     async def save_file(self, file: UploadFile, description: Optional[str] = None) -> FileInDB:
         # Create file path
         file_path = os.path.join(settings.UPLOAD_DIR, file.filename)
@@ -39,17 +49,6 @@ class FileService:
         db_file = self.file_repository.create(file_data)
         return FileInDB.model_validate(db_file)
     
-    def get_file(self, file_id: int) -> Optional[FileInDB]:
-        db_file = self.file_repository.get_by_id(file_id)
-        if db_file:
-            return db_file
-        return None
-    
-    def get_all_files(self, skip: int = 0, limit: int = 100) -> List[FileInDB]:
-        db_files = self.file_repository.get_all(skip, limit)
-        return db_files
-        # return [FileInDB.model_validate(file) for file in db_files]
-    
     def update_file(self, file_id: int, file_update: FileUpdate) -> Optional[FileInDB]:
         db_file = self.file_repository.update(file_id, file_update)
         if db_file:
@@ -69,3 +68,17 @@ class FileService:
     def search_files(self, params: FileSearchParams, skip: int = 0, limit: int = 100) -> List[FileInDB]:
         db_files = self.file_repository.search(params, skip, limit)
         return [FileInDB.model_validate(file) for file in db_files]
+    
+    async def search_documents(self, search_request: DocumentSearchRequest) -> List[FileInDB]:
+        """
+        Hàm thực hiện tìm kiếm tài liệu với các bộ lọc được cung cấp
+        """        
+        try:
+            result = self.file_repository.search(search_request)
+            if not result:
+                return []
+                
+            return result
+            
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Error querying database: {str(e)}")

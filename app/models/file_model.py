@@ -19,20 +19,20 @@ class FileInDB(FileBase):
     id: str
     option_id: int
     doc_name: str
-    doc_code: str
-    date_publish: str
-    date_expire: str
-    version: str
-    author: str
-    approver: str
-    year_publish: str
+    doc_code: Optional[str] = None
+    date_publish: Optional[str] = None
+    date_expire: Optional[str] = None
+    version: Optional[int] = None
+    author: Optional[str] = None
+    approver: Optional[str] = None
+    year_publish: Optional[str] = None
     field: str
-    doc_type: str
+    doc_type: Optional[str] = None
     validity: str
     status: str
     updated_by: str
     leader_approver: str
-    updated_time: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 class FileResponse(FileInDB):
@@ -45,3 +45,9 @@ class FileSearchParams(BaseModel):
     min_size: Optional[int] = None
     max_size: Optional[int] = None
     description: Optional[str] = None
+
+class DocumentSearchRequest(BaseModel):
+    doc_name: Optional[str] = None
+    option_doc: Optional[int] = None
+    field: Optional[str] = None
+    doc_type: Optional[str] = None
