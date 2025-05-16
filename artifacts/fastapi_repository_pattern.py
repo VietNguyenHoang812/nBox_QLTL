@@ -116,7 +116,7 @@ class FileBase(BaseModel):
     description: Optional[str] = None
 
 
-class FileCreate(FileBase):
+class DocCreate(FileBase):
     pass
 
 
@@ -124,7 +124,7 @@ class FileUpdate(FileBase):
     description: Optional[str] = None
 
 
-class FileInDB(FileBase):
+class DocInDB(FileBase):
     id: int
     filename: str
     file_path: str
@@ -137,7 +137,7 @@ class FileInDB(FileBase):
         orm_mode = True
 
 
-class FileResponse(FileInDB):
+class FileResponse(DocInDB):
     pass
 
 
@@ -153,7 +153,7 @@ class FileSearchParams(BaseModel):
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from app.database.models import File
-from app.models.file_model import FileCreate, FileUpdate, FileSearchParams
+from app.models.file_model import DocCreate, FileUpdate, FileSearchParams
 
 
 class FileRepository:
@@ -220,7 +220,7 @@ from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
 from app.repositories.file_repository import FileRepository
-from app.models.file_model import FileCreate, FileUpdate, FileSearchParams, FileInDB
+from app.models.file_model import DocCreate, FileUpdate, FileSearchParams, DocInDB
 from app.config import settings
 
 
@@ -230,7 +230,7 @@ class FileService:
         # Ensure upload directory exists
         os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
     
-    async def save_file(self, file: UploadFile, description: Optional[str] = None) -> FileInDB:
+    async def save_file(self, file: UploadFile, description: Optional[str] = None) -> DocInDB:
         # Create file path
         file_path = os.path.join(settings.UPLOAD_DIR, file.filename)
         
@@ -252,22 +252,22 @@ class FileService:
         
         # Save to database
         db_file = self.file_repository.create(file_data)
-        return FileInDB.model_validate(db_file)
+        return DocInDB.model_validate(db_file)
     
-    def get_file(self, file_id: int) -> Optional[FileInDB]:
+    def get_file(self, file_id: int) -> Optional[DocInDB]:
         db_file = self.file_repository.get_by_id(file_id)
         if db_file:
-            return FileInDB.model_validate(db_file)
+            return DocInDB.model_validate(db_file)
         return None
     
-    def get_all_files(self, skip: int = 0, limit: int = 100) -> List[FileInDB]:
+    def get_all_files(self, skip: int = 0, limit: int = 100) -> List[DocInDB]:
         db_files = self.file_repository.get_all(skip, limit)
-        return [FileInDB.model_validate(file) for file in db_files]
+        return [DocInDB.model_validate(file) for file in db_files]
     
-    def update_file(self, file_id: int, file_update: FileUpdate) -> Optional[FileInDB]:
+    def update_file(self, file_id: int, file_update: FileUpdate) -> Optional[DocInDB]:
         db_file = self.file_repository.update(file_id, file_update)
         if db_file:
-            return FileInDB.model_validate(db_file)
+            return DocInDB.model_validate(db_file)
         return None
     
     def delete_file(self, file_id: int) -> bool:
@@ -280,9 +280,9 @@ class FileService:
             return self.file_repository.delete(file_id)
         return False
     
-    def search_files(self, params: FileSearchParams, skip: int = 0, limit: int = 100) -> List[FileInDB]:
+    def search_files(self, params: FileSearchParams, skip: int = 0, limit: int = 100) -> List[DocInDB]:
         db_files = self.file_repository.search(params, skip, limit)
-        return [FileInDB.model_validate(file) for file in db_files]
+        return [DocInDB.model_validate(file) for file in db_files]
 
 
 # routers/file_router.py

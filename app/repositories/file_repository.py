@@ -2,15 +2,90 @@ import logging
 import pandas as pd
 
 from typing import Union, List, Dict, Optional
+
 from app.database.base import get_db_connection
-from app.models.file_model import FileUpdate
+from app.models.doc_model import DocCreate
+from app.models.file_model import FileCreate
 from app.models.request_model import DocumentSearchRequest
 
 
 logger = logging.getLogger(__name__)
 
 class FileRepository:
-    def update(self, file_id: int, update_data: FileUpdate) -> Optional[dict]:
+    def __init__(self):
+        pass
+
+    def create_doc(self, doc_create: DocCreate):
+        with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                id = ...  # Generate ID logic here
+                validity = "Mới nhất"
+                status = "Đã tiếp nhận"
+
+                query = """
+                    INSERT INTO fake_db (
+                        id, option_id, doc_name, doc_code, 
+                        date_publish, date_expire, version, author, 
+                        approver, year_publish, field, doc_type, 
+                        validity, status, updated_by, leader_approver, 
+                        updated_at
+                    )
+                    VALUES (
+                        %s, %s, %s, %s, 
+                        %s, %s, %s, %s, 
+                        %s, %s, %s, %s, 
+                        %s, %s, %s, %s,
+                        NOW()
+                    )
+                """
+                values = (
+                    id, doc_create.option_id, doc_create.doc_name, doc_create.doc_code,
+                    doc_create.date_publish, doc_create.date_expire, doc_create.version, doc_create.author,
+                    doc_create.approver, doc_create.year_publish, doc_create.field, doc_create.doc_type,
+                    validity, status, doc_create.updated_by, doc_create.leader_approver
+                )
+
+                cur.execute(query, values)
+                conn.commit()
+
+                return id
+    
+    def create_file(self, file_create: DocCreate):
+        with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                id = ...  # Generate ID logic here
+                validity = "Mới nhất"
+                status = "Đã tiếp nhận"
+
+                query = """
+                    INSERT INTO files (
+                        id, option_id, doc_name, doc_code, 
+                        date_publish, date_expire, version, author, 
+                        approver, year_publish, field, doc_type, 
+                        validity, status, updated_by, leader_approver, 
+                        updated_at
+                    )
+                    VALUES (
+                        %s, %s, %s, %s, 
+                        %s, %s, %s, %s, 
+                        %s, %s, %s, %s, 
+                        %s, %s, %s, %s,
+                        NOW()
+                    )
+                """ 
+                values = (
+                    id, file_create.option_id, file_create.doc_name, file_create.doc_code,
+                    file_create.date_publish, file_create.date_expire, file_create.version, file_create.author,
+                    file_create.approver, file_create.year_publish, file_create.field, file_create.doc_type,
+                    validity, status, file_create.updated_by, file_create.leader_approver
+                )
+
+                cur.execute(query, values)
+                conn.commit()
+                
+                return id
+
+    def update(self, file_id: int, update_data) -> Optional[dict]:
         with get_db_connection() as conn:
             with conn.cursor() as cur:
                 update_dict = update_data.model_dump(exclude_unset=True)

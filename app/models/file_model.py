@@ -1,21 +1,13 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
 
 
-class FileBase(BaseModel):
+class FileUpdate(BaseModel):
     description: Optional[str] = None
 
 
-class FileCreate(FileBase):
-    pass
-
-
-class FileUpdate(FileBase):
-    description: Optional[str] = None
-
-
-class FileInDB(FileBase):
+class FileInDB(BaseModel):
     id: str
     option_id: int
     doc_name: str
@@ -32,22 +24,8 @@ class FileInDB(FileBase):
     status: str
     updated_by: str
     leader_approver: str
-    updated_at: Optional[datetime] = None
+    updated_at: datetime = None
 
 
-class FileResponse(FileInDB):
+class FileResponse(BaseModel):
     pass
-
-
-class FileSearchParams(BaseModel):
-    filename: Optional[str] = None
-    content_type: Optional[str] = None
-    min_size: Optional[int] = None
-    max_size: Optional[int] = None
-    description: Optional[str] = None
-
-class DocumentSearchRequest(BaseModel):
-    doc_name: Optional[str] = None
-    option_doc: Optional[int] = None
-    field: Optional[str] = None
-    doc_type: Optional[str] = None

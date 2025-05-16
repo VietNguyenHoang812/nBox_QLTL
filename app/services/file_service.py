@@ -5,8 +5,9 @@ from fastapi import UploadFile, HTTPException
 from sqlalchemy.orm import Session
 
 from app.repositories.file_repository import FileRepository
-from app.models.file_model import FileCreate, FileUpdate, FileSearchParams, FileInDB, DocumentSearchRequest
-from app.models.request_model import UploadRequest
+# from app.models.file_model import Doc
+from app.models.doc_model import DocCreate
+from app.models.request_model import UploadRequest, DocumentSearchRequest
 from app.config import settings
 
 
@@ -21,39 +22,43 @@ class FileService:
         Upload multiple files with their corresponding request metadata
         """
         for request in requests:
-            
-        
-        pass
+            doc_create = DocCreate(**request.metadata)
+            doc_id = self.file_repository.create_doc(doc_create)
 
-    async def save_file(self, file: UploadFile, description: Optional[str] = None) -> FileInDB:
+
+        
+            pass
+
+    async def save_file(self, file: UploadFile):
+        pass
         # Create file path
-        file_path = os.path.join(settings.UPLOAD_DIR, file.filename)
+        # file_path = os.path.join(settings.UPLOAD_DIR, file.filename)
         
-        # Save file to disk
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+        # # Save file to disk
+        # with open(file_path, "wb") as buffer:
+        #     shutil.copyfileobj(file.file, buffer)
         
-        # Get file size
-        file_size = os.path.getsize(file_path)
+        # # Get file size
+        # file_size = os.path.getsize(file_path)
         
-        # Prepare data for DB
-        file_data = {
-            "filename": file.filename,
-            "file_path": file_path,
-            "content_type": file.content_type,
-            "file_size": file_size,
-            "description": description
-        }
+        # # Prepare data for DB
+        # file_data = {
+        #     "filename": file.filename,
+        #     "file_path": file_path,
+        #     "content_type": file.content_type,
+        #     "file_size": file_size,
+        #     "description": description
+        # }
         
-        # Save to database
-        db_file = self.file_repository.create(file_data)
-        return FileInDB.model_validate(db_file)
+        # # Save to database
+        # db_file = self.file_repository.create(file_data)
+        # return DocInDB.model_validate(db_file)
     
-    def update_file(self, file_id: int, file_update: FileUpdate) -> Optional[FileInDB]:
+    def update_file(self, file_id: int, file_update):
         db_file = self.file_repository.update(file_id, file_update)
-        if db_file:
-            return FileInDB.model_validate(db_file)
-        return None
+        # if db_file:
+        #     return DocInDB.model_validate(db_file)
+        # return None
     
     def delete_file(self, file_id: int) -> bool:
         file = self.file_repository.get_by_id(file_id)
@@ -65,11 +70,11 @@ class FileService:
             return self.file_repository.delete(file_id)
         return False
     
-    def search_files(self, params: FileSearchParams, skip: int = 0, limit: int = 100) -> List[FileInDB]:
-        db_files = self.file_repository.search(params, skip, limit)
-        return [FileInDB.model_validate(file) for file in db_files]
+    # def search_files(self, params: FileSearchParams, skip: int = 0, limit: int = 100) -> List[DocInDB]:
+    #     db_files = self.file_repository.search(params, skip, limit)
+    #     return [DocInDB.model_validate(file) for file in db_files]
     
-    async def search_documents(self, search_request: DocumentSearchRequest) -> List[FileInDB]:
+    async def search_documents(self, search_request: DocumentSearchRequest):
         """
         Hàm thực hiện tìm kiếm tài liệu với các bộ lọc được cung cấp
         """        
