@@ -1,0 +1,39 @@
+{
+    "requests": [
+        {
+            "request_id": "batch1",
+            "is_update": false,
+            "description": "First batch of files",
+            "metadata": {
+                "option_id": 1,
+                "doc_name": "test",
+                "doc_code": "ABC",
+                "date_publish": "2023-10-01",
+                "date_expire": "2024-10-01",
+                "version": 2,
+                "field": "Mạng lõi",
+                "doc_type": "Tiêu chuẩn",
+                "updated_by": "vietnh41",
+                "leader_approver": "vietnh41"
+            },
+            "files": [
+                "test1.txt"
+            ]
+        },
+        {
+            "request_id": "batch2",
+            "is_update": true,
+            "description": "Second batch",
+            "metadata": {
+                "option_id": 2,
+                "doc_name": "test",
+                "field": "BRCD",
+                "updated_by": "vietnh41",
+                "leader_approver": "vietnh41"
+            },
+            "files": [
+                "test2.txt"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,69 @@
+curl --location --request POST 'http://netmind.viettel.vn:8001/vtnet-assistant/v1/api/bot-manager/chat-messages' \
+--header 'accept-language: vi' \
+--header 'authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyOTMwNDgiLCJhdXRoX3Rva2VuX3Nlc3Npb25fY3JlYXRlIjoiMjAyNS8wMy8xOSAxMDozMzowMyIsImV4cCI6MTc0Mjk1OTk4MywiaWF0IjoxNzQyMzU1MTgzLCJqdGkiOiJ3QWZrSWhuZmp3a2RPdk1pcFhTTiJ9.UUDHTsOD5NNpqih9XjzgZ-1QzfSAymWs6uTk8ya_nXYXNXHEnK-OvZ_QEGIlEaArKRTOG-FRsF4gGvbxw56JXQ' \
+--header 'content-type: application/json' \
+--data-raw '{
+    "response_mode": "streaming",
+    "conversation_id": "",
+    "user": "vietnh41",
+    "botId": "1",
+    "inputs": {},
+    "query": "xin chào, hãy giải thích vì sao con mèo có 4 chân"
+}'
+
+curl --location --request POST 'http://10.255.62.201:8001/vtnet-assistant/v1/api/bot-manager/chat-messages' \
+--header 'accept-language: vi' \
+--header 'authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyOTMwNDgiLCJhdXRoX3Rva2VuX3Nlc3Npb25fY3JlYXRlIjoiMjAyNS8wMy8xOSAxMDozMzowMyIsImV4cCI6MTc0Mjk1OTk4MywiaWF0IjoxNzQyMzU1MTgzLCJqdGkiOiJ3QWZrSWhuZmp3a2RPdk1pcFhTTiJ9.UUDHTsOD5NNpqih9XjzgZ-1QzfSAymWs6uTk8ya_nXYXNXHEnK-OvZ_QEGIlEaArKRTOG-FRsF4gGvbxw56JXQ' \
+--header 'content-type: application/json' \
+--data-raw '{
+    "response_mode": "streaming",
+    "conversation_id": "",
+    "user": "vietnh41",
+    "botId": "1",
+    "inputs": {},
+    "query": "xin chào, hãy giải thích vì sao con mèo có 4 chân"
+}'
+
+curl --location --request POST 'https://netmind.viettel.vn:8002/vtnet-assistant/v1/api/bot-manager/chat-messages' \
+--header 'accept-language: vi' \
+--header 'authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyOTMwNDgiLCJhdXRoX3Rva2VuX3Nlc3Npb25fY3JlYXRlIjoiMjAyNS8wMy8xOSAxMDozMzowMyIsImV4cCI6MTc0Mjk1OTk4MywiaWF0IjoxNzQyMzU1MTgzLCJqdGkiOiJ3QWZrSWhuZmp3a2RPdk1pcFhTTiJ9.UUDHTsOD5NNpqih9XjzgZ-1QzfSAymWs6uTk8ya_nXYXNXHEnK-OvZ_QEGIlEaArKRTOG-FRsF4gGvbxw56JXQ' \
+--header 'content-type: application/json' \
+--data-raw '{
+    "response_mode": "streaming",
+    "conversation_id": "",
+    "user": "vietnh41",
+    "botId": "1",
+    "inputs": {},
+    "query": "xin chào, hãy giải thích vì sao con mèo có 4 chân"
+}'
+
+curl --location --request POST 'http://10.255.62.213/vtnet-assistant/v1/api/bot-manager/chat-messages' \
+--header 'accept-language: vi' \
+--header 'authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyOTMwNDgiLCJhdXRoX3Rva2VuX3Nlc3Npb25fY3JlYXRlIjoiMjAyNS8wNC8xNyAxNDoyMjo1NyIsImV4cCI6MTc0NTQ3OTM3NywiaWF0IjoxNzQ0ODc0NTc3LCJqdGkiOiJsc0hCbkdKSWVpbUVIYmtadUVabCJ9.1EFFnMtE3UAqez_qPv_NWYg8Kf5iIikqOgpElM2MLf5Ajj5CX92SdTHmbYrMvsUhoytRvzpGP-nOKMsYA95fhQ' \
+--header 'content-type: application/json' \
+--data-raw '{
+    "response_mode": "streaming",
+    "conversation_id": "",
+    "user": "vietnh41",
+    "botId": "1",
+    "inputs": {},
+    "query": "xin chào, hãy giải thích vì sao con mèo có 4 chân"
+}'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

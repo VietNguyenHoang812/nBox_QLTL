@@ -156,7 +156,7 @@ from app.database.models import File
 from app.models.file_model import DocCreate, FileUpdate, FileSearchParams
 
 
-class FileRepository:
+class DocRepository:
     def __init__(self, db: Session):
         self.db = db
     
@@ -219,13 +219,13 @@ from typing import List, Optional
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
-from app.repositories.file_repository import FileRepository
+from app.repositories.doc_repository import DocRepository
 from app.models.file_model import DocCreate, FileUpdate, FileSearchParams, DocInDB
 from app.config import settings
 
 
-class FileService:
-    def __init__(self, file_repository: FileRepository):
+class DocService:
+    def __init__(self, file_repository: DocRepository):
         self.file_repository = file_repository
         # Ensure upload directory exists
         os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
@@ -291,8 +291,8 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 
 from app.database.base import get_db
-from app.repositories.file_repository import FileRepository
-from app.services.file_service import FileService
+from app.repositories.doc_repository import DocRepository
+from app.services.doc_service import DocService
 from app.models.file_model import FileResponse, FileUpdate, FileSearchParams
 
 router = APIRouter()
@@ -300,15 +300,15 @@ router = APIRouter()
 
 # Dependency for FileService
 def get_file_service(db: Session = Depends(get_db)):
-    repository = FileRepository(db)
-    return FileService(repository)
+    repository = DocRepository(db)
+    return DocService(repository)
 
 
 @router.post("/files/", response_model=FileResponse)
 async def upload_file(
     file: UploadFile = File(...),
     description: Optional[str] = Form(None),
-    file_service: FileService = Depends(get_file_service)
+    file_service: DocService = Depends(get_file_service)
 ):
     """Upload a file with optional description"""
     try:
@@ -321,7 +321,7 @@ async def upload_file(
 def get_files(
     skip: int = 0,
     limit: int = 100,
-    file_service: FileService = Depends(get_file_service)
+    file_service: DocService = Depends(get_file_service)
 ):
     """Get all files with pagination"""
     return file_service.get_all_files(skip, limit)
@@ -330,7 +330,7 @@ def get_files(
 @router.get("/files/{file_id}", response_model=FileResponse)
 def get_file(
     file_id: int,
-    file_service: FileService = Depends(get_file_service)
+    file_service: DocService = Depends(get_file_service)
 ):
     """Get a specific file by ID"""
     file = file_service.get_file(file_id)
@@ -343,7 +343,7 @@ def get_file(
 def update_file(
     file_id: int,
     file_update: FileUpdate,
-    file_service: FileService = Depends(get_file_service)
+    file_service: DocService = Depends(get_file_service)
 ):
     """Update file metadata"""
     updated_file = file_service.update_file(file_id, file_update)
@@ -355,7 +355,7 @@ def update_file(
 @router.delete("/files/{file_id}", response_model=bool)
 def delete_file(
     file_id: int,
-    file_service: FileService = Depends(get_file_service)
+    file_service: DocService = Depends(get_file_service)
 ):
     """Delete a file"""
     success = file_service.delete_file(file_id)
@@ -373,7 +373,7 @@ def search_files(
     description: Optional[str] = Query(None),
     skip: int = 0,
     limit: int = 100,
-    file_service: FileService = Depends(get_file_service)
+    file_service: DocService = Depends(get_file_service)
 ):
     """Search files by various parameters"""
     search_params = FileSearchParams(

@@ -4,16 +4,19 @@ from typing import List, Optional
 from fastapi import UploadFile, HTTPException
 from sqlalchemy.orm import Session
 
+from app.repositories.doc_repository import DocRepository
 from app.repositories.file_repository import FileRepository
-# from app.models.file_model import Doc
+from app.models.file_model import FileCreate
 from app.models.doc_model import DocCreate
 from app.models.request_model import UploadRequest, DocumentSearchRequest
 from app.config import settings
 
 
-class FileService:
-    def __init__(self, file_repository: FileRepository):
-        self.file_repository = file_repository
+class DocService:
+    def __init__(self, doc_repository: DocRepository):
+        self.doc_repository = doc_repository
+        self.file_repository = FileRepository()
+
         # Ensure upload directory exists
         os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
     
@@ -21,53 +24,60 @@ class FileService:
         """
         Upload multiple files with their corresponding request metadata
         """
+        idx_start_file = 0
         for request in requests:
+            print(request)
+            # Create document record in database
             doc_create = DocCreate(**request.metadata)
-            doc_id = self.file_repository.create_doc(doc_create)
+            doc_id = self.doc_repository.create_doc(doc_create)
 
+            # Save files of the request
+            request_files = files[idx_start_file:idx_start_file + len(request.files)]
+            for file in request_files:
+                # Save file to disk
+                path_folder, _ = await self.save_file(file, doc_id)
 
-        
-            pass
+                # Create file record in database
+                file_format = file.filename.split(".")[-1]
+                file_name = file.filename.split(".")[0]
 
-    async def save_file(self, file: UploadFile):
+                file_create = FileCreate(
+                    doc_id=doc_id,
+                    file_name=file_name,
+                    file_format=file_format[1:],
+                    path_folder=path_folder,
+                    pathfile=file.filename,
+                )
+
+                self.file_repository.create(file_create)
+    
         pass
+
+    async def save_file(self, file: UploadFile, doc_id: int):
         # Create file path
-        # file_path = os.path.join(settings.UPLOAD_DIR, file.filename)
+        path_folder = os.path.join(settings.UPLOAD_DIR, str(doc_id))
+        full_pathfile = os.path.join(path_folder, file.filename)
         
-        # # Save file to disk
-        # with open(file_path, "wb") as buffer:
-        #     shutil.copyfileobj(file.file, buffer)
-        
-        # # Get file size
-        # file_size = os.path.getsize(file_path)
-        
-        # # Prepare data for DB
-        # file_data = {
-        #     "filename": file.filename,
-        #     "file_path": file_path,
-        #     "content_type": file.content_type,
-        #     "file_size": file_size,
-        #     "description": description
-        # }
-        
-        # # Save to database
-        # db_file = self.file_repository.create(file_data)
-        # return DocInDB.model_validate(db_file)
+        # Save file to disk
+        with open(full_pathfile, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+        return path_folder, full_pathfile
     
     def update_file(self, file_id: int, file_update):
-        db_file = self.file_repository.update(file_id, file_update)
+        db_file = self.doc_repository.update(file_id, file_update)
         # if db_file:
         #     return DocInDB.model_validate(db_file)
         # return None
     
     def delete_file(self, file_id: int) -> bool:
-        file = self.file_repository.get_by_id(file_id)
+        file = self.doc_repository.get_by_id(file_id)
         if file:
             # Delete from filesystem if exists
             if os.path.exists(file.file_path):
                 os.remove(file.file_path)
             # Delete from database
-            return self.file_repository.delete(file_id)
+            return self.doc_repository.delete(file_id)
         return False
     
     # def search_files(self, params: FileSearchParams, skip: int = 0, limit: int = 100) -> List[DocInDB]:
@@ -79,7 +89,7 @@ class FileService:
         Hàm thực hiện tìm kiếm tài liệu với các bộ lọc được cung cấp
         """        
         try:
-            result = self.file_repository.search(search_request)
+            result = self.doc_repository.search(search_request)
             if not result:
                 return []
                 

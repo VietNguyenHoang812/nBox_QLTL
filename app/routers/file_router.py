@@ -3,17 +3,16 @@ import json
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query, Body
 from typing import List, Optional
 
-from app.repositories.file_repository import FileRepository
-from app.services.file_service import FileService
-from app.models.file_model import DocumentSearchRequest
-from app.models.request_model import UploadRequest
+from app.repositories.doc_repository import DocRepository
+from app.services.doc_service import DocService
+from app.models.request_model import UploadRequest, DocumentSearchRequest
 
 router = APIRouter()
 
 
 def get_file_service():
-    repository = FileRepository()
-    return FileService(repository)
+    repository = DocRepository()
+    return DocService(repository)
 
 @router.post("/batch-upload/")
 async def batch_upload(
@@ -28,28 +27,28 @@ async def batch_upload(
         requests: List of UploadRequest containing metadata for each batch
         files: List of files to upload
     """
-    try:
-        # Parse the JSON string into a list of UploadRequest objects
-        requests = json.loads(requests_json)["requests"]
-        requests = [UploadRequest(**request) for request in requests]
+    # try:
+    # Parse the JSON string into a list of UploadRequest objects
+    requests = json.loads(requests_json)["requests"]
+    requests = [UploadRequest(**request) for request in requests]
 
-        # Validate that number of files matches the total expected files
-        total_expected_files = sum(len(req.files) for req in requests)
-        if len(files) != total_expected_files:
-            raise HTTPException(
-                status_code=400,
-                detail="Number of files doesn't match the request specifications"
-            )
+    # Validate that number of files matches the total expected files
+    total_expected_files = sum(len(req.files) for req in requests)
+    if len(files) != total_expected_files:
+        raise HTTPException(
+            status_code=400,
+            detail="Number of files doesn't match the request specifications"
+        )
 
-        file_service = FileService(FileRepository())
-        results  = await file_service.upload_files(requests, files)
+    file_service = DocService(DocRepository())
+    results  = await file_service.upload_files(requests, files)
 
-        return {
-            "status": "success",
-        }
+    return {
+        "status": "success",
+    }
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/documents/search", tags=["Documents"])
 async def search_documents_post(
@@ -60,7 +59,7 @@ async def search_documents_post(
     - Có thể tìm kiếm theo một hoặc nhiều tham số
     - Nếu không có tham số nào được truyền vào, trả về tất cả tài liệu
     """
-    file_service = FileService(FileRepository())
+    file_service = DocService(DocRepository())
     files = await file_service.search_documents(search_request)
 
     return files
@@ -81,7 +80,7 @@ async def search_documents_post(
 @router.delete("/files/{file_id}", response_model=bool)
 def delete_file(
     file_id: int,
-    file_service: FileService = Depends(get_file_service)
+    file_service: DocService = Depends(get_file_service)
 ):
     """Delete a file"""
     success = file_service.delete_file(file_id)
