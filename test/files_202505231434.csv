@@ -1,0 +1,9 @@
+"id","doc_id","file_name","file_format","file_role","created_at","updated_at","updated_by","path_folder","pathfile"
+"2","1",Phiếu trình giải quyết công việc,pdf,PT,2025-05-12 00:00:00.000 +0700,2025-05-12 00:00:00.000 +0700,vietnh41,VTN123,a.pdf
+"3","1",Phụ lục 01 Các hướng dẫn,pdf,PL01,2025-05-12 00:00:00.000 +0700,2025-05-12 00:00:00.000 +0700,vietnh41,VTN123,b.pdf
+"1","1","OLA, WLA PvM",pdf,VB,2025-05-12 00:00:00.000 +0700,2025-05-12 00:00:00.000 +0700,vietnh41,VTN123,c.pdf
+"4","2",Quy trình quản lý sự cố (IM),pdf,VB,2025-05-12 00:00:00.000 +0700,2025-05-12 00:00:00.000 +0700,vietnh41,GNC123,d.pdf
+"5","3",FAQ mảng Vô tuyến,xlsx,"",2025-05-12 00:00:00.000 +0700,2025-05-12 00:00:00.000 +0700,vietnh41,VTNFAQ1,e.xlsx
+"6","5",Tài liệu vendor Nokia,docx,"",2025-05-12 00:00:00.000 +0700,2025-05-12 00:00:00.000 +0700,vietnh41,VTNOTHER001,vendor nokia.docx
+a5c5d38f-0cb8-4488-abaa-e3740690b639_f744c215-65f9-4f92-b229-aebfe75787d1,a5c5d38f-0cb8-4488-abaa-e3740690b639,test1,xt,,2025-05-23 10:47:50.111 +0700,2025-05-23 10:47:50.111 +0700,vietnh41,./uploads/a5c5d38f-0cb8-4488-abaa-e3740690b639,test1.txt
+"61345168-963d-4812-9e87-fcd39d28db3a_1536aa63-5419-469a-98ac-84d20b19346b","61345168-963d-4812-9e87-fcd39d28db3a",test1,xt,,2025-05-23 10:47:50.139 +0700,2025-05-23 10:47:50.139 +0700,vietnh41,./uploads/61345168-963d-4812-9e87-fcd39d28db3a,test1.txt
