@@ -1,5 +1,6 @@
 import os
 import shutil
+
 from typing import List, Optional
 from fastapi import UploadFile, HTTPException
 from sqlalchemy.orm import Session
@@ -27,37 +28,40 @@ class DocService:
         idx_start_file = 0
         for request in requests:
             print(request)
-            # Create document record in database
-            doc_create = DocCreate(**request.metadata)
-            doc_id = self.doc_repository.create_doc(doc_create)
 
-            # Save files of the request
-            request_files = files[idx_start_file:idx_start_file + len(request.files)]
-            for file in request_files:
-                # Save file to disk
-                path_folder, _ = await self.save_file(file, doc_id)
+            # Check if update or create
+            if request.is_update == False:
+                doc_create = DocCreate(**request.metadata)
+                doc_id = self.doc_repository.create(doc_create)
 
-                # Create file record in database
-                file_format = file.filename.split(".")[-1]
-                file_name = file.filename.split(".")[0]
+                # Save files of the request
+                request_files = files[idx_start_file:idx_start_file + len(request.files)]
+                for file in request_files:
+                    # Save file to disk
+                    path_folder, _ = await self.save_file(file, doc_id)
 
-                file_create = FileCreate(
-                    doc_id=doc_id,
-                    file_name=file_name,
-                    file_format=file_format[1:],
-                    path_folder=path_folder,
-                    pathfile=file.filename,
-                )
+                    # Create file record in database
+                    file_format = file.filename.split(".")[-1]
+                    file_name = file.filename.split(".")[0]
 
-                self.file_repository.create(file_create)
-    
-        pass
+                    file_create = FileCreate(
+                        doc_id=doc_id,
+                        file_name=file_name,
+                        file_format=file_format[1:],
+                        path_folder=path_folder,
+                        pathfile=file.filename,
+                    )
+
+                    self.file_repository.create(file_create, doc_create.updated_by)
+            else:
+                pass
 
     async def save_file(self, file: UploadFile, doc_id: int):
         # Create file path
         path_folder = os.path.join(settings.UPLOAD_DIR, str(doc_id))
         full_pathfile = os.path.join(path_folder, file.filename)
-        
+        os.makedirs(path_folder, exist_ok=True)
+
         # Save file to disk
         with open(full_pathfile, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)

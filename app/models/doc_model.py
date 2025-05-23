@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class DocCreate(BaseModel):
-    option_id: int
+    option_doc: int
     doc_name: str
     doc_code: Optional[str] = None
     date_publish: Optional[str] = None

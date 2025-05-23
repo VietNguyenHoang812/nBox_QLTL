@@ -5,7 +5,7 @@
             "is_update": false,
             "description": "First batch of files",
             "metadata": {
-                "option_id": 1,
+                "option_doc": 1,
                 "doc_name": "test",
                 "doc_code": "ABC",
                 "date_publish": "2023-10-01",
@@ -25,7 +25,8 @@
             "is_update": true,
             "description": "Second batch",
             "metadata": {
-                "option_id": 2,
+                "doc_id": "",
+                "option_doc": 2,
                 "doc_name": "test",
                 "field": "BRCD",
                 "updated_by": "vietnh41",

@@ -1,11 +1,11 @@
 import logging
 import pandas as pd
+import uuid
 
 from typing import Union, List, Dict, Optional
 
 from app.database.base import get_db_connection
 from app.models.doc_model import DocCreate
-from app.models.file_model import FileCreate
 from app.models.request_model import DocumentSearchRequest
 
 
@@ -18,13 +18,14 @@ class DocRepository:
     def create(self, doc_create: DocCreate):
         with get_db_connection() as conn:
             with conn.cursor() as cur:
-                id = ...  # Generate ID logic here
+                # Generate a unique ID for the document
+                id = str(uuid.uuid4())
                 validity = "Mới nhất"
                 status = "Đã tiếp nhận"
 
                 query = """
                     INSERT INTO fake_db (
-                        id, option_id, doc_name, doc_code, 
+                        id, option_doc, doc_name, doc_code, 
                         date_publish, date_expire, version, author, 
                         approver, year_publish, field, doc_type, 
                         validity, status, updated_by, leader_approver, 
@@ -39,7 +40,7 @@ class DocRepository:
                     )
                 """
                 values = (
-                    id, doc_create.option_id, doc_create.doc_name, doc_create.doc_code,
+                    id, doc_create.option_doc, doc_create.doc_name, doc_create.doc_code,
                     doc_create.date_publish, doc_create.date_expire, doc_create.version, doc_create.author,
                     doc_create.approver, doc_create.year_publish, doc_create.field, doc_create.doc_type,
                     validity, status, doc_create.updated_by, doc_create.leader_approver

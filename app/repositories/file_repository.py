@@ -1,5 +1,6 @@
 import logging
 import pandas as pd
+import uuid
 
 from typing import Union, List, Dict, Optional
 
@@ -13,12 +14,11 @@ class FileRepository:
     def __init__(self):
         pass
 
-    def create(self, file_create: FileCreate):
+    def create(self, file_create: FileCreate, updated_by: str) -> int:
         with get_db_connection() as conn:
             with conn.cursor() as cur:
-                id = ...  # Generate ID logic here
-                validity = "Mới nhất"
-                status = "Đã tiếp nhận"
+                # Generate a unique ID for the file
+                id = f"{file_create.doc_id}_{str(uuid.uuid4())}"
 
                 query = """
                     INSERT INTO files (
@@ -29,13 +29,13 @@ class FileRepository:
                     VALUES (
                         %s, %s, %s, %s, 
                         %s, %s, %s,
-                        %s, %s, %s
+                        NOW(), NOW(), %s
                     )
                 """
                 values = (
                     id, file_create.doc_id, file_create.file_name, file_create.file_format,
                     file_create.file_role, file_create.path_folder, file_create.pathfile,
-                    file_create.created_at, file_create.updated_at, file_create.updated_by
+                    updated_by
                 )
 
                 cur.execute(query, values)
