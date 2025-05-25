@@ -59,23 +59,10 @@ async def search_documents_post(
     - Có thể tìm kiếm theo một hoặc nhiều tham số
     - Nếu không có tham số nào được truyền vào, trả về tất cả tài liệu
     """
-    file_service = DocService(DocRepository())
-    files = await file_service.search_documents(search_request)
+    doc_service = DocService(DocRepository())
+    docs = await doc_service.search_documents(search_request)
 
-    return files
-
-# @router.put("/files/{file_id}", response_model=FileResponse)
-# def update_file(
-#     file_id: int,
-#     file_update: FileUpdate,
-#     file_service: FileService = Depends(get_file_service)
-# ):
-#     """Update file metadata"""
-#     updated_file = file_service.update_file(file_id, file_update)
-#     if updated_file is None:
-#         raise HTTPException(status_code=404, detail="File not found")
-#     return updated_file
-
+    return docs
 
 @router.delete("/files/{file_id}", response_model=bool)
 def delete_file(

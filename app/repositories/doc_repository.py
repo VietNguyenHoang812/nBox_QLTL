@@ -5,7 +5,7 @@ import uuid
 from typing import Union, List, Dict, Optional
 
 from app.database.base import get_db_connection
-from app.models.doc_model import DocCreate
+from app.models.doc_model import DocCreate, DocInDB
 from app.models.request_model import DocumentSearchRequest
 
 
@@ -51,7 +51,7 @@ class DocRepository:
 
                 return id
 
-    def search(self, search_request: DocumentSearchRequest) -> Union[List[Dict], Dict[str, str]]:
+    def search(self, search_request: DocumentSearchRequest) -> List[DocInDB]:
         """
         Hàm thực hiện tìm kiếm tài liệu với các bộ lọc được cung cấp
         """
@@ -85,6 +85,15 @@ class DocRepository:
                     cur.execute(query, params)
                     columns = [desc[0] for desc in cur.description]
                     rows = cur.fetchall()
+
+                    list_doc_in_db = []
+                    for row in rows:
+                        print(row)
+                        doc_in_db = DocInDB(**dict(zip(columns, row)))
+                        list_doc_in_db.append(doc_in_db)
+                    
+                    print(list_doc_in_db)
+
                     return [dict(zip(columns, row)) for row in rows]
         
         except Exception as e:

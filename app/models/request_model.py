@@ -11,6 +11,6 @@ class UploadRequest(BaseModel):
 
 class DocumentSearchRequest(BaseModel):
     doc_name: Optional[str] = None
-    option_doc: Optional[int] = None
+    option_doc: Optional[str] = None
     field: Optional[str] = None
     doc_type: Optional[str] = None
