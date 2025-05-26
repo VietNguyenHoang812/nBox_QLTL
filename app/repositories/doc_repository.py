@@ -88,13 +88,10 @@ class DocRepository:
 
                     list_doc_in_db = []
                     for row in rows:
-                        print(row)
                         doc_in_db = DocInDB(**dict(zip(columns, row)))
                         list_doc_in_db.append(doc_in_db)
                     
-                    print(list_doc_in_db)
-
-                    return [dict(zip(columns, row)) for row in rows]
+                    return list_doc_in_db
         
         except Exception as e:
             logger.error(f"Database error in search: {str(e)}")

@@ -1,40 +1,35 @@
 {
-    "requests": [
+    "request_id": "",
+    "name": "Test Request",
+    "created_by": "vietnh41",
+    "metadata": [
         {
-            "request_id": "batch1",
             "is_update": false,
-            "description": "First batch of files",
-            "metadata": {
-                "option_doc": 1,
-                "doc_name": "test",
-                "doc_code": "ABC",
-                "date_publish": "2023-10-01",
-                "date_expire": "2024-10-01",
-                "version": 2,
-                "field": "Mạng lõi",
-                "doc_type": "Tiêu chuẩn",
-                "updated_by": "vietnh41",
-                "leader_approver": "vietnh41"
-            },
-            "files": [
+            "option_doc": "1",
+            "doc_name": "test",
+            "doc_code": "ABC",
+            "date_publish": "2023-10-01",
+            "date_expire": "2024-10-01",
+            "version": "2",
+            "field": "Mạng lõi",
+            "doc_type": "Tiêu chuẩn",
+            "leader_approver": "vietnh41",
+            "file": [
                 "test1.txt"
-            ]
+            ],
+            "file_other":[]
         },
         {
-            "request_id": "batch2",
             "is_update": true,
-            "description": "Second batch",
-            "metadata": {
-                "doc_id": "",
-                "option_doc": 2,
-                "doc_name": "test",
-                "field": "BRCD",
-                "updated_by": "vietnh41",
-                "leader_approver": "vietnh41"
-            },
-            "files": [
+            "doc_id": "",
+            "option_doc": 2,
+            "doc_name": "test",
+            "field": "BRCD",
+            "leader_approver": "vietnh41",
+            "file": [
                 "test2.txt"
-            ]
+            ],
+            "file_other": [],
         }
     ]
 }

@@ -46,6 +46,18 @@ class FileRepository:
     def get(self, file_id: int):
         pass
 
+    def search(self, doc_id: str) -> List[FileInDB]:
+        with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                query = """
+                    SELECT * FROM files WHERE doc_id = %s
+                """
+                cur.execute(query, (doc_id,))
+                columns = [desc[0] for desc in cur.description]
+                rows = cur.fetchall()
+
+                return [FileInDB(**dict(zip(columns, row))) for row in rows]
+
     def update(self, file_id: int, update_data) -> Optional[dict]:
         pass
 

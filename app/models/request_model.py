@@ -1,13 +1,12 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import List, Optional
-from datetime import datetime
 
 
 class UploadRequest(BaseModel):
     request_id: str
-    is_update: bool = False
-    metadata: Optional[dict] = None
-    files: List[str]
+    name: str
+    created_by: str
+    metadata: Optional[List[dict]]
 
 class DocumentSearchRequest(BaseModel):
     doc_name: Optional[str] = None

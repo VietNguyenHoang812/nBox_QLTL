@@ -10,6 +10,7 @@ from app.repositories.file_repository import FileRepository
 from app.models.file_model import FileCreate
 from app.models.doc_model import DocCreate
 from app.models.request_model import UploadRequest, DocumentSearchRequest
+from app.models.response_model import DocumentSearchResponse
 from app.config import settings
 
 
@@ -88,16 +89,50 @@ class DocService:
     #     db_files = self.file_repository.search(params, skip, limit)
     #     return [DocInDB.model_validate(file) for file in db_files]
     
-    async def search_documents(self, search_request: DocumentSearchRequest):
+    async def search_documents(self, search_request: DocumentSearchRequest) -> List[DocumentSearchResponse]:
         """
         Hàm thực hiện tìm kiếm tài liệu với các bộ lọc được cung cấp
         """        
         try:
-            result = self.doc_repository.search(search_request)
-            if not result:
-                return []
+            list_docs = self.doc_repository.search(search_request)
+            list_reponse = []
+            for doc in list_docs:
+                doc_id = doc.id
+                # Get files associated with the document
+                list_files = self.file_repository.search(doc_id)
+                print(list_files)
+                main_files, other_files = [], []
+                for file in list_files:
+                    # Check if the file is a main file
+                    if file.file_role == "VB":
+                        main_files.append(file.pathfile)
+                    else:
+                        other_files.append(file.pathfile)
                 
-            return result
+                doc_search_response = DocumentSearchResponse(
+                    id=doc.id,
+                    option_doc=doc.option_doc,
+                    doc_name=doc.doc_name,
+                    doc_code=doc.doc_code,
+                    date_publish=doc.date_publish,
+                    date_expire=doc.date_expire,
+                    version=doc.version,
+                    author=doc.author,
+                    approver=doc.approver,
+                    year_publish=doc.year_publish,
+                    field=doc.field,
+                    doc_type=doc.doc_type,
+                    file=main_files,
+                    file_other=other_files,
+                    validity=doc.validity,
+                    status=doc.status,
+                    updated_by=doc.updated_by,
+                    leader_approver=doc.leader_approver,
+                    updated_at=doc.updated_at
+                )
+                list_reponse.append(doc_search_response)
+                
+            return list_reponse
             
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error querying database: {str(e)}")

@@ -21,7 +21,7 @@ class DocCreate(BaseModel):
 
 class DocInDB(BaseModel):
     id: str
-    option_id: str
+    option_doc: str
     doc_name: str
     doc_code: Optional[str] = None
     date_publish: Optional[str] = None
@@ -36,4 +36,4 @@ class DocInDB(BaseModel):
     status: str
     updated_by: str
     leader_approver: str
-    updated_at: datetime = None
+    updated_at: Optional[datetime] = None

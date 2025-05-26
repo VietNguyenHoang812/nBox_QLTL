@@ -20,8 +20,8 @@ class FileInDB(BaseModel):
     file_name: str
     file_format: str
     file_role: Optional[str] = None
+    created_at: Optional[datetime] = None    
+    updated_at: Optional[datetime] = None
+    updated_by: str
     path_folder: str
     pathfile: str
-    created_at: datetime = None    
-    updated_at: datetime = None
-    updated_by: str

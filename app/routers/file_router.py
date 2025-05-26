@@ -16,7 +16,6 @@ def get_file_service():
 
 @router.post("/batch-upload/")
 async def batch_upload(
-    # requests_json: List[UploadRequest] = Form(...),
     requests_json: str = Form(...),
     files: List[UploadFile] = File(...),
 ):
@@ -29,11 +28,11 @@ async def batch_upload(
     """
     # try:
     # Parse the JSON string into a list of UploadRequest objects
-    requests = json.loads(requests_json)["requests"]
-    requests = [UploadRequest(**request) for request in requests]
+    request = json.loads(requests_json)
+    request = UploadRequest(**request)
 
     # Validate that number of files matches the total expected files
-    total_expected_files = sum(len(req.files) for req in requests)
+    total_expected_files = sum(len(req.files) for req in request)
     if len(files) != total_expected_files:
         raise HTTPException(
             status_code=400,
@@ -41,7 +40,7 @@ async def batch_upload(
         )
 
     file_service = DocService(DocRepository())
-    results  = await file_service.upload_files(requests, files)
+    results  = await file_service.upload_files(request, files)
 
     return {
         "status": "success",
