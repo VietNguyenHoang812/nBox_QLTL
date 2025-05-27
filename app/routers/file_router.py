@@ -5,7 +5,7 @@ from typing import List, Optional
 
 from app.repositories.doc_repository import DocRepository
 from app.services.doc_service import DocService
-from app.models.request_model import UploadRequest, DocumentSearchRequest
+from app.models.request_model import UploadRequest, DocumentSearchRequest, DocumentUploadRequest
 
 router = APIRouter()
 
@@ -30,17 +30,11 @@ async def batch_upload(
     # Parse the JSON string into a list of UploadRequest objects
     request = json.loads(requests_json)
     request = UploadRequest(**request)
-
-    # Validate that number of files matches the total expected files
-    total_expected_files = sum(len(req.files) for req in request)
-    if len(files) != total_expected_files:
-        raise HTTPException(
-            status_code=400,
-            detail="Number of files doesn't match the request specifications"
-        )
+    metadatas, created_by, leader_approver = request.metadata, request.created_by, request.leader_approver
+    document_requests = [DocumentUploadRequest(**metadata) for metadata in metadatas]
 
     file_service = DocService(DocRepository())
-    results  = await file_service.upload_files(request, files)
+    results  = await file_service.upload_documents(document_requests, created_by, leader_approver, files)
 
     return {
         "status": "success",

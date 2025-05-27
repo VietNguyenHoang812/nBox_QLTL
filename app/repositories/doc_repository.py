@@ -101,18 +101,20 @@ class DocRepository:
                 "details": str(e)
             }
     
-    def update(self, file_id: int, update_data) -> Optional[dict]:
+    def update(self, doc_id: str, doc_create: DocCreate) -> Optional[dict]:
         with get_db_connection() as conn:
             with conn.cursor() as cur:
-                update_dict = update_data.model_dump(exclude_unset=True)
+                update_dict = doc_create.model_dump(exclude_unset=True)
                 set_clause = ", ".join(f"{key} = %s" for key in update_dict.keys())
-                values = list(update_dict.values()) + [file_id]
+                values = list(update_dict.values()) + [doc_id]
                 cur.execute(
-                    f"UPDATE files SET {set_clause} WHERE id = %s RETURNING *",
+                    f"UPDATE fake_db SET {set_clause} WHERE id = %s RETURNING *",
                     values
                 )
                 conn.commit()
+
                 return cur.fetchone()
+        
     
     def delete(self, file_id: int) -> bool:
         with get_db_connection() as conn:

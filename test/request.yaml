@@ -1,11 +1,12 @@
 {
-    "request_id": "",
+    "request_id": "sdfger",
     "name": "Test Request",
     "created_by": "vietnh41",
+    "leader_approver": "vietnh41",
     "metadata": [
         {
-            "is_update": false,
             "option_doc": "1",
+            "option": false,
             "doc_name": "test",
             "doc_code": "ABC",
             "date_publish": "2023-10-01",
@@ -15,21 +16,46 @@
             "doc_type": "Tiêu chuẩn",
             "leader_approver": "vietnh41",
             "file": [
-                "test1.txt"
+                "test1.pdf"
             ],
-            "file_other":[]
+            "file_other": []
         },
         {
-            "is_update": true,
-            "doc_id": "",
-            "option_doc": 2,
+            "option_doc": "2",            
+            "option": true,
+            "id_update": "61345168-963d-4812-9e87-fcd39d28db3a",
             "doc_name": "test",
             "field": "BRCD",
             "leader_approver": "vietnh41",
             "file": [
-                "test2.txt"
+                "test2.pdf"
             ],
-            "file_other": [],
+            "file_other": [
+                "test3.pdf"
+            ]
+        }
+    ]
+}
+
+{
+    "request_id": "sdfger",
+    "name": "Test Request",
+    "created_by": "vietnh41",
+    "leader_approver": "vietnh41",
+    "metadata": [
+        {
+            "option_doc": "2",            
+            "option": true,
+            "id_update": "61345168-963d-4812-9e87-fcd39d28db3a",
+            "doc_name": "test",
+            "field": "6",
+            "leader_approver": "vietnh41",
+            "file": [
+                "test2.pdf"
+            ],
+            "file_other": [
+                "test3.pdf"
+            ]
         }
     ]
 }

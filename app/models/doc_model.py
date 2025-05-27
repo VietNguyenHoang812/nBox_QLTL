@@ -4,12 +4,12 @@ from datetime import datetime
 
 
 class DocCreate(BaseModel):
-    option_doc: int
+    option_doc: str
     doc_name: str
     doc_code: Optional[str] = None
     date_publish: Optional[str] = None
     date_expire: Optional[str] = None
-    version: Optional[int] = None
+    version: Optional[str] = None
     author: Optional[str] = None
     approver: Optional[str] = None
     year_publish: Optional[str] = None
