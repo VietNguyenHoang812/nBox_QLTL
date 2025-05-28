@@ -24,7 +24,7 @@ class DocRepository:
                 status = "Đã tiếp nhận"
 
                 query = """
-                    INSERT INTO fake_db (
+                    INSERT INTO documents (
                         id, option_doc, doc_name, doc_code, 
                         date_publish, date_expire, version, author, 
                         approver, year_publish, field, doc_type, 
@@ -59,7 +59,7 @@ class DocRepository:
             with get_db_connection() as conn:
                 with conn.cursor() as cur:
                     # Xây dựng câu query SQL động dựa trên các tham số được cung cấp
-                    query = "SELECT * FROM fake_db WHERE 1=1"
+                    query = "SELECT * FROM documents WHERE 1=1"
                     doc_name = search_request.doc_name
                     option_doc = search_request.option_doc
                     field = search_request.field
@@ -104,18 +104,27 @@ class DocRepository:
     def update(self, doc_id: str, doc_create: DocCreate) -> Optional[dict]:
         with get_db_connection() as conn:
             with conn.cursor() as cur:
-                update_dict = doc_create.model_dump(exclude_unset=True)
-                set_clause = ", ".join(f"{key} = %s" for key in update_dict.keys())
-                values = list(update_dict.values()) + [doc_id]
-                cur.execute(
-                    f"UPDATE fake_db SET {set_clause} WHERE id = %s RETURNING *",
-                    values
+                query = """
+                    UPDATE documents SET 
+                        option_doc = %s, doc_name = %s, doc_code = %s, date_publish = %s, 
+                        date_expire = %s, version = %s, author = %s, approver = %s, 
+                        year_publish = %s, field = %s, doc_type = %s, updated_by = %s, leader_approver = %s, 
+                        updated_at = NOW()
+                    WHERE id = %s 
+                    RETURNING *
+                """
+                values = (
+                    doc_create.option_doc, doc_create.doc_name, doc_create.doc_code, doc_create.date_publish, 
+                    doc_create.date_expire, doc_create.version, doc_create.author, doc_create.approver, 
+                    doc_create.year_publish, doc_create.field, doc_create.doc_type, doc_create.updated_by, doc_create.leader_approver,
+                    doc_id
                 )
+
+                cur.execute(query, values)
                 conn.commit()
 
                 return cur.fetchone()
         
-    
     def delete(self, file_id: int) -> bool:
         with get_db_connection() as conn:
             with conn.cursor() as cur:
