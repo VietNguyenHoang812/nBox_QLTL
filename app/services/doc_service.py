@@ -169,7 +169,7 @@ class DocService:
             for doc in list_docs:
                 doc_id = doc.id
                 # Get files associated with the document
-                list_files = await self.file_repository.search(doc_id)
+                list_files = self.file_repository.search(doc_id)
                 main_files, other_files = [], []
                 for file in list_files:
                     # Check if the file is a main file
