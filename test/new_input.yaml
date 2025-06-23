@@ -1,0 +1,19 @@
+{
+  "request_id": "batch1",
+  "is_update": false,
+  "description": "First batch of files",
+  "metadata":
+    {
+      "list_require":
+        [
+          {
+            "option_doc": "4",
+            "file": "[{\"originalName\":\"1749551301_PTYC_Nang_cap_Module_quan_ly_cong_trinh_quy_2.docx\",\"host\":\"\",\"relLocation\":\"aws2\/netmind\/category_file_upload\/1749551301_PTYC_Nang_cap_Module_quan_ly_cong_trinh_quy_2.docx\",\"file_url\":\"aws2\/netmind\/category_file_upload\/1749551301_PTYC_Nang_cap_Module_quan_ly_cong_trinh_quy_2.docx\",\"id\":6864261,\"name\":\"PTYC_Nang cap Module quan ly cong trinh quy 2.docx\",\"thumbnail\":\"aws2\/netmind\/category_file_upload\/1749551301_PTYC_Nang_cap_Module_quan_ly_cong_trinh_quy_2.docx\",\"fileType\":\"application\/vnd.openxmlformats-officedocument.wordprocessingml.document\",\"size\":1195717,\"shortLink\":\"FOsuEb\",\"signed\":\"\"}]",
+            "doc_type": "test",
+            "field": [{ "value": "1", "content": "V\u00f4 tuy\u1ebfn" }],
+            "doc_name": "dongntt",
+            "option": "1",
+          },
+        ],
+    },
+}

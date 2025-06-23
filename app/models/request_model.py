@@ -1,17 +1,18 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import Dict, List, Optional
+
+from app.models.file_model import FileUpload
 
 
 class UploadRequest(BaseModel):
     request_id: str
-    name: str
-    created_by: str
-    leader_approver: str
-    metadata: Optional[List[dict]]
+    is_update: Optional[bool]
+    description: Optional[str]
+    metadata: Dict[str, List[dict]]
 
 class DocumentUploadRequest(BaseModel):
     option_doc: str
-    option: bool
+    option: int
     id_update: Optional[str] = None
     doc_name: str
     doc_code: Optional[str] = None
@@ -20,10 +21,10 @@ class DocumentUploadRequest(BaseModel):
     version: Optional[str] = None
     author: Optional[str] = None
     approver: Optional[str] = None
-    field: str
+    field: List[Dict[str, str]]
     doc_type: Optional[str] = None
-    file: List
-    file_other: Optional[List] = None
+    file: List[FileUpload]
+    file_other: Optional[List[FileUpload]] = None
     year_publish: Optional[str] = None
 
 class DocumentSearchRequest(BaseModel):

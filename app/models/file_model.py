@@ -25,3 +25,16 @@ class FileInDB(BaseModel):
     updated_by: str
     path_folder: str
     pathfile: str
+
+class FileUpload(BaseModel):
+    originalName: str
+    host: Optional[str] = None
+    relLocation: Optional[str] = None
+    file_url: str
+    id: int
+    name: str
+    thumbnail: Optional[str] = None
+    fileType: Optional[str] = None
+    size: Optional[int] = None
+    shortLink: Optional[str] = None
+    signed: Optional[str] = None

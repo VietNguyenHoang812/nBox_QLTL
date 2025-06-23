@@ -22,6 +22,8 @@ class DocRepository:
                 id = str(uuid.uuid4())
                 validity = "Mới nhất"
                 status = "Đã tiếp nhận"
+                fields = [field["content"] for field in doc_create.field]
+                doc_field = ",".join(fields) if fields else None
 
                 query = """
                     INSERT INTO documents (
@@ -42,7 +44,7 @@ class DocRepository:
                 values = (
                     id, doc_create.option_doc, doc_create.doc_name, doc_create.doc_code,
                     doc_create.date_publish, doc_create.date_expire, doc_create.version, doc_create.author,
-                    doc_create.approver, doc_create.year_publish, doc_create.field, doc_create.doc_type,
+                    doc_create.approver, doc_create.year_publish, doc_field, doc_create.doc_type,
                     validity, status, doc_create.updated_by, doc_create.leader_approver
                 )
 
@@ -101,23 +103,26 @@ class DocRepository:
                 "details": str(e)
             }
     
-    def update(self, doc_id: str, doc_create: DocCreate) -> Optional[dict]:
+    def update(self, doc_name: str, doc_create: DocCreate) -> Optional[dict]:
         with get_db_connection() as conn:
             with conn.cursor() as cur:
+                fields = [field["content"] for field in doc_create.field]
+                doc_field = ",".join(fields) if fields else None
+                
                 query = """
                     UPDATE documents SET 
-                        option_doc = %s, doc_name = %s, doc_code = %s, date_publish = %s, 
-                        date_expire = %s, version = %s, author = %s, approver = %s, 
-                        year_publish = %s, field = %s, doc_type = %s, updated_by = %s, leader_approver = %s, 
+                        option_doc = %s, doc_code = %s, date_publish = %s, date_expire = %s, 
+                        version = %s, author = %s, approver = %s, year_publish = %s, 
+                        field = %s, doc_type = %s, updated_by = %s, leader_approver = %s, 
                         updated_at = NOW()
-                    WHERE id = %s 
-                    RETURNING *
+                    WHERE doc_name = %s 
+                    RETURNING id
                 """
                 values = (
-                    doc_create.option_doc, doc_create.doc_name, doc_create.doc_code, doc_create.date_publish, 
-                    doc_create.date_expire, doc_create.version, doc_create.author, doc_create.approver, 
-                    doc_create.year_publish, doc_create.field, doc_create.doc_type, doc_create.updated_by, doc_create.leader_approver,
-                    doc_id
+                    doc_create.option_doc, doc_create.doc_code, doc_create.date_publish, doc_create.date_expire, 
+                    doc_create.version, doc_create.author, doc_create.approver, doc_create.year_publish, 
+                    doc_field, doc_create.doc_type, doc_create.updated_by, doc_create.leader_approver,
+                    doc_name
                 )
 
                 cur.execute(query, values)

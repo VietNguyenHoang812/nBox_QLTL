@@ -1,0 +1,35 @@
+{
+  "request_id": "batch1",
+  "is_update": False,
+  "description": "First batch of files",
+  "metadata":
+    {
+      "list_require":
+        [
+          {
+            "option_doc": "1",
+            "option": "1",
+            "doc_name": "vietnh41_test_2306",
+            "doc_code": "AAA1234",
+            "date_publish": "2025-06-22",
+            "date_expire": "2025-06-24",
+            "version": 1,
+            "field": [{ "value": "7", "content": "Hạ tầng CNTT" }],
+            "doc_type": "3",
+            "file": '[{"originalName":"1750642866_Ke_hoach_hop_tac_VTN-VAI_trong_phat_trien_ung_dung_AI_nam_2025.pdf","host":"","relLocation":"aws2/netmind/category_file_upload/1750642866_Ke_hoach_hop_tac_VTN-VAI_trong_phat_trien_ung_dung_AI_nam_2025.pdf","file_url":"aws2/netmind/category_file_upload/1750642866_Ke_hoach_hop_tac_VTN-VAI_trong_phat_trien_ung_dung_AI_nam_2025.pdf","id":6883275,"name":"Ke hoach hop tac VTN-VAI trong phat trien ung dung AI nam 2025.pdf","thumbnail":"aws2/netmind/category_file_upload/1750642866_Ke_hoach_hop_tac_VTN-VAI_trong_phat_trien_ung_dung_AI_nam_2025.pdf","fileType":"application/pdf","size":507464,"shortLink":"ogPJSa","signed":""}]',
+            "file_other": '[{"originalName":"1750643497_ragflow_evaluation.xlsx","host":"","relLocation":"aws2/netmind/category_file_upload/1750643497_ragflow_evaluation.xlsx","file_url":"aws2/netmind/category_file_upload/1750643497_ragflow_evaluation.xlsx","id":6883279,"name":"ragflow_evaluation.xlsx","thumbnail":"aws2/netmind/category_file_upload/1750643497_ragflow_evaluation.xlsx","fileType":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","size":156733,"shortLink":"brwbOQ","signed":""}]',
+            "approver": 13361,
+            "author": "vietnh41",
+          },
+          {
+            "option_doc": "4",
+            "option": "2",
+            "id_update": "Tài liệu vendor Nokia",
+            "doc_name": "vendor2",
+            "field": [{ "value": "1", "content": "Vô tuyến" }],
+            "doc_type": "tài liệu vendor",
+            "file": '[{"originalName":"1750643599_VBQL_left.xlsx","host":"","relLocation":"aws2/netmind/category_file_upload/1750643599_VBQL_left.xlsx","file_url":"aws2/netmind/category_file_upload/1750643599_VBQL_left.xlsx","id":6883281,"name":"VBQL_left.xlsx","thumbnail":"aws2/netmind/category_file_upload/1750643599_VBQL_left.xlsx","fileType":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","size":10431,"shortLink":"hqrfuc","signed":""}]',
+          },
+        ],
+    },
+}

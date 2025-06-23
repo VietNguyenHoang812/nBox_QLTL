@@ -63,3 +63,13 @@ class FileRepository:
 
     def delete(self, file_id: int) -> bool:
         pass
+
+    def delete_by_doc_id(self, doc_id: str) -> bool:
+        with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                query = """
+                    DELETE FROM files WHERE doc_id = %s
+                """
+                cur.execute(query, (doc_id,))
+                conn.commit()
+                return cur.rowcount > 0

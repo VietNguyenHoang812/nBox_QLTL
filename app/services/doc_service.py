@@ -14,6 +14,9 @@ from app.models.response_model import DocumentSearchResponse
 from app.config import settings
 
 
+CREATE = 1
+UPDATE = 2
+
 class DocService:
     def __init__(self, doc_repository: DocRepository):
         self.doc_repository = doc_repository
@@ -22,16 +25,16 @@ class DocService:
         # Ensure upload directory exists
         os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
     
-    async def upload_documents(self, document_requests: List[DocumentUploadRequest], created_by: str, leader_approver: str , files: List[UploadFile]):
+    async def upload_documents(self, document_requests: List[DocumentUploadRequest], created_by: str="vietnh41", leader_approver: str="vietnh41"):
         """
         Upload multiple files with their corresponding request metadata
         """
         for request in document_requests:
             # Check if update or create
-            if request.option == False:
-                await self.create_document(request, created_by, leader_approver, files)
+            if request.option == CREATE:
+                await self.create_document(request, created_by, leader_approver)
             else:
-                await self.update_document(request, created_by, leader_approver, files)
+                await self.update_document(request, created_by, leader_approver)
 
     async def save_file(self, file, doc_id: int):
         # Create file path
@@ -46,7 +49,7 @@ class DocService:
 
         return path_folder, full_pathfile
     
-    async def create_document(self, request: DocumentUploadRequest, created_by: str, leader_approver: str, files: List[UploadFile]):
+    async def create_document(self, request: DocumentUploadRequest, created_by: str, leader_approver: str):
         doc_create = DocCreate(
             **request.model_dump(),
             updated_by=created_by,
@@ -59,17 +62,18 @@ class DocService:
         files_other = request.file_other if request.file_other else []
         for file in files_main:
             # Save file to disk
-            path_folder, _ = await self.save_file(file, doc_id)
+            # path_folder, _ = await self.save_file(file, doc_id)
 
             # Create file record in database
-            filename = file
+            filename = file.name
             file_format = filename.split(".")[-1]
             file_name = filename.split(".")[0]
+            path_folder = file.file_url
 
             file_create = FileCreate(
                 doc_id=doc_id,
                 file_name=file_name,
-                file_format=file_format[1:],
+                file_format=file_format,
                 file_role="VB",  # Main file
                 path_folder=path_folder,
                 pathfile=filename,
@@ -79,24 +83,25 @@ class DocService:
         
         for file_other in files_other:
             # Save file to disk
-            path_folder, _ = await self.save_file(file_other, doc_id)
+            # path_folder, _ = await self.save_file(file_other, doc_id)
 
             # Create file record in database
-            filename = file_other
+            filename = file_other.name
             file_format = filename.split(".")[-1]
             file_name = filename.split(".")[0]
+            path_folder = file.file_url
 
             file_create = FileCreate(
                 doc_id=doc_id,
                 file_name=file_name,
-                file_format=file_format[1:],
+                file_format=file_format,
                 path_folder=path_folder,
                 pathfile=filename,
             )
 
             self.file_repository.create(file_create, doc_create.updated_by)
     
-    async def update_document(self, request: DocumentUploadRequest, created_by: str, leader_approver: str, files: List[UploadFile]):
+    async def update_document(self, request: DocumentUploadRequest, created_by: str, leader_approver: str):
         doc_create = DocCreate(
             **request.model_dump(),
             updated_by=created_by,
@@ -104,50 +109,56 @@ class DocService:
         )
 
         # Update document
-        doc_id = request.id_update
-        self.doc_repository.update(doc_id, doc_create)
+        doc_name = request.id_update
+        doc_id = self.doc_repository.update(doc_name, doc_create)
+        doc_id = doc_id[0]
 
         # Update files
-        # files_main = request.file
-        # files_other = request.file_other if request.file_other else []
-        # for file in files_main:
+        files_main = request.file
+        files_other = request.file_other if request.file_other else []
+        for file in files_main:
         #     # Save file to disk
         #     path_folder, _ = await self.save_file(file, doc_id)
 
-        #     # Create file record in database
-        #     filename = file
-        #     file_format = filename.split(".")[-1]
-        #     file_name = filename.split(".")[0]
+            # Delete old files record in database
+            self.file_repository.delete_by_doc_id(doc_id)
 
-        #     file_create = FileCreate(
-        #         doc_id=doc_id,
-        #         file_name=file_name,
-        #         file_format=file_format[1:],
-        #         file_role="VB",  # Main file
-        #         path_folder=path_folder,
-        #         pathfile=filename,
-        #     )
+            # Create file record in database
+            filename = file.name
+            file_format = filename.split(".")[-1]
+            file_name = filename.split(".")[0]
+            path_folder = file.file_url
 
-        #     self.file_repository.create(file_create, doc_create.updated_by)
+            file_create = FileCreate(
+                doc_id=doc_id,
+                file_name=file_name,
+                file_format=file_format,
+                file_role="VB",  # Main file
+                path_folder=path_folder,
+                pathfile=filename,
+            )
+
+            self.file_repository.create(file_create, doc_create.updated_by)
         
-        # for file_other in files_other:
-        #     # Save file to disk
-        #     path_folder, _ = await self.save_file(file_other, doc_id)
+        for file_other in files_other:
+            # Save file to disk
+            # path_folder, _ = await self.save_file(file_other, doc_id)
 
-        #     # Create file record in database
-        #     filename = file_other
-        #     file_format = filename.split(".")[-1]
-        #     file_name = filename.split(".")[0]
+            # Create file record in database
+            filename = file_other
+            file_format = filename.split(".")[-1]
+            file_name = filename.split(".")[0]
+            path_folder = file.file_url
 
-        #     file_create = FileCreate(
-        #         doc_id=doc_id,
-        #         file_name=file_name,
-        #         file_format=file_format[1:],
-        #         path_folder=path_folder,
-        #         pathfile=filename,
-        #     )
+            file_other_create = FileCreate(
+                doc_id=doc_id,
+                file_name=file_name,
+                file_format=file_format,
+                path_folder=path_folder,
+                pathfile=filename,
+            )
 
-        #     self.file_repository.create(file_create, doc_create.updated_by)
+            self.file_repository.create(file_other_create, doc_create.updated_by)
 
     def delete_file(self, file_id: int) -> bool:
         file = self.doc_repository.get_by_id(file_id)

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List, Dict
 from datetime import datetime
 
 
@@ -13,7 +13,7 @@ class DocCreate(BaseModel):
     author: Optional[str] = None
     approver: Optional[str] = None
     year_publish: Optional[str] = None
-    field: str
+    field: List[Dict[str, str]]
     doc_type: Optional[str] = None
     updated_by: str
     leader_approver: str
