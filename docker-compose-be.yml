@@ -1,0 +1,16 @@
+services:
+  backend:
+    image: vietthevarious/qltl:1.0.0
+    container_name: file_storage_backend
+    ports:
+      - "8095:8095"
+    volumes:
+      - ./src:/app
+    command: sh run.sh
+    restart: always
+    networks:
+      - file_storage_network
+
+networks:
+  file_storage_network:
+    driver: bridge

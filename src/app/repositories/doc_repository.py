@@ -1,5 +1,4 @@
 import logging
-import pandas as pd
 import uuid
 
 from typing import Union, List, Dict, Optional
